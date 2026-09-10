@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Medical Waste Management</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #dff7f0, #ffffff);
+        }
+
+        .login-box {
+            width: 400px;
+            margin: 70px auto;
+            padding: 35px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 55px;
+        }
+
+        h1 {
+            color: #176b5b;
+            font-size: 24px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 25px;
+            background-color: #176b5b;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0d4d42;
+        }
+
+        .footer {
+            margin-top: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <div class="icon">♻️</div>
+
+    <h1>SMART MEDICAL WASTE MANAGEMENT</h1>
+    <h2>Login</h2>
+
+    <label>Select Role</label>
+
+    <select id="role">
+        <option value="hospital">Hospital Staff</option>
+        <option value="collector">Waste Collector</option>
+        <option value="admin">Admin</option>
+    </select>
+
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Enter username">
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter password">
+
+    <button onclick="login()">Login</button>
+
+    <div class="footer">
+        Smart & Safe Medical Waste Management System
+    </div>
+
+</div>
+
+<script>
+
+function login() {
+
+    let role = document.getElementById("role").value;
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+
+    if (username == "" || password == "") {
+        alert("Please enter username and password!");
+        return;
+    }
+
+    alert("Login successful!");
+
+    if (role == "hospital") {
+        window.location.href = "hospital.html";
+    }
+    else if (role == "collector") {
+        window.location.href = "collector.html";
+    }
+    else if (role == "admin") {
+        window.location.href = "admin.html";
+    }
+}
+
+</script>
+
+</body>
+</html>

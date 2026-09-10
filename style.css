@@ -1,0 +1,110 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f7f5;
+    margin: 0;
+    padding: 30px;
+}
+
+h1 {
+    text-align: center;
+    color: #176b5b;
+}
+
+h2 {
+    color: #176b5b;
+    border-bottom: 2px solid #176b5b;
+    padding-bottom: 8px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input, select {
+    width: 300px;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+}
+
+button {
+    padding: 10px 18px;
+    background-color: #176b5b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0d4d42;
+}
+
+hr {
+    margin: 30px 0;
+}
+
+#collectorStatus,
+#adminStatus {
+    font-weight: bold;
+}
+
+/* MOBILE APP STYLE */
+
+.card,
+.details,
+.header,
+.login-box {
+    border-radius: 18px;
+}
+
+button {
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+input,
+select {
+    border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .container {
+        width: 100%;
+        padding: 5px;
+    }
+
+    .card,
+    .details,
+    .header,
+    .login-box {
+        width: auto;
+        margin: 15px auto;
+        padding: 20px;
+    }
+
+    .cards {
+        display: block;
+    }
+
+    .box {
+        margin-bottom: 15px;
+    }
+
+    input,
+    select,
+    button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+}

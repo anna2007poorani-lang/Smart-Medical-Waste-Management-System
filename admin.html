@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f7f5;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #176b5b;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .box {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+
+        .box h2 {
+            margin: 5px;
+            color: #176b5b;
+        }
+
+        .details {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+
+        .details p {
+            font-size: 18px;
+        }
+
+        button {
+            background-color: #176b5b;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .logout {
+            background-color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📊 ADMIN DASHBOARD</h1>
+
+    <button class="logout" onclick="logout()">Logout</button>
+
+    <div class="cards">
+
+        <div class="box">
+            <h2 id="totalRequests">0</h2>
+            <p>Total Requests</p>
+        </div>
+
+        <div class="box">
+            <h2 id="pending">0</h2>
+            <p>Pending</p>
+        </div>
+
+        <div class="box">
+            <h2 id="completed">0</h2>
+            <p>Completed</p>
+        </div>
+
+    </div>
+
+    <div class="details">
+
+        <h2>Collection Details</h2>
+
+        <p><b>Hospital:</b> <span id="adminHospital">No request</span></p>
+
+        <p><b>Waste Type:</b> <span id="adminWaste">No request</span></p>
+
+        <p><b>Quantity:</b> <span id="adminQuantity">No request</span></p>
+
+        <p><b>Location:</b> <span id="adminLocation">No request</span></p>
+
+        <p><b>Status:</b> <span id="adminStatus">No request</span></p>
+
+    </div>
+
+</div>
+
+<script>
+
+function logout() {
+    window.location.href = "login.html";
+}
+
+window.onload = function() {
+
+    let hospital = localStorage.getItem("hospital");
+    let waste = localStorage.getItem("waste");
+    let quantity = localStorage.getItem("quantity");
+    let location = localStorage.getItem("location");
+
+    if (hospital) {
+
+        document.getElementById("adminHospital").innerHTML = hospital;
+        document.getElementById("adminWaste").innerHTML = waste;
+        document.getElementById("adminQuantity").innerHTML = quantity + " kg";
+        document.getElementById("adminLocation").innerHTML = location;
+        document.getElementById("adminStatus").innerHTML = "Request Submitted";
+
+        document.getElementById("totalRequests").innerHTML = "1";
+        document.getElementById("pending").innerHTML = "1";
+        document.getElementById("completed").innerHTML = "0";
+    }
+
+};
+
+</script>
+
+</body>
+</html>

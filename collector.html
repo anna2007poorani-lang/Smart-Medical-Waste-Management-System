@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Waste Collector</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7f7;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .card {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #173f3f;
+        }
+
+        h2 {
+            color: #176b6b;
+            border-bottom: 2px solid #176b6b;
+            padding-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 18px 0;
+        }
+
+        button {
+            background-color: #168b8b;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0f6f6f;
+        }
+
+        .logout {
+            background-color: #777;
+        }
+
+        .logout:hover {
+            background-color: #555;
+        }
+
+        #status {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>🚚 WASTE COLLECTOR</h1>
+
+    <button class="logout" onclick="logout()">Logout</button>
+
+    <h2>Collection Request</h2>
+
+    <p>
+        <b>Hospital:</b>
+        <span id="hospital">Waiting for request</span>
+    </p>
+
+    <p>
+        <b>Waste Type:</b>
+        <span id="waste">Waiting for request</span>
+    </p>
+
+    <p>
+        <b>Quantity:</b>
+        <span id="quantity">Waiting for request</span>
+    </p>
+
+    <p>
+        <b>Location:</b>
+        <span id="location">Waiting for request</span>
+    </p>
+
+    <button onclick="acceptRequest()">Accept Request</button>
+
+    <p id="status">
+        <b>Status:</b> Waiting for request
+    </p>
+
+</div>
+
+<script>
+
+function logout() {
+    window.location.href = "login.html";
+}
+
+function loadRequest() {
+
+    let hospital = localStorage.getItem("hospital");
+    let waste = localStorage.getItem("waste");
+    let quantity = localStorage.getItem("quantity");
+    let location = localStorage.getItem("location");
+
+    if (hospital) {
+        document.getElementById("hospital").innerHTML = hospital;
+        document.getElementById("waste").innerHTML = waste;
+        document.getElementById("quantity").innerHTML = quantity + " kg";
+        document.getElementById("location").innerHTML = location;
+        document.getElementById("status").innerHTML =
+            "<b>Status:</b> Request Received";
+    }
+}
+
+function acceptRequest() {
+
+    let hospital = localStorage.getItem("hospital");
+
+    if (hospital) {
+        document.getElementById("status").innerHTML =
+            "<b>Status:</b> Collection Accepted";
+
+        alert("Collection Request Accepted!");
+    } else {
+        alert("No collection request available!");
+    }
+}
+
+window.onload = loadRequest;
+
+</script>
+
+</body>
+</html>
