@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Verification</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f8f6;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .card {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #176b5b;
+        }
+
+        .verified {
+            color: #176b5b;
+            background: #d8f3dc;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>📱 Request Verification</h1>
+
+    <p><b>Request ID:</b></p>
+
+    <p id="requestId">Reading QR data...</p>
+
+    <div class="verified">
+        ✅ QR data received
+        <br>
+        Request verification page opened.
+    </div>
+
+</div>
+
+<script>
+
+    let currentUrl = new URL(window.location.href);
+
+    let requestId =
+        currentUrl.searchParams.get("requestId");
+
+    document.getElementById("requestId").innerText =
+        requestId || "No Request ID found";
+
+</script>
+
+</body>
+</html>
