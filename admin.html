@@ -1,144 +1,432 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - Smart Medical Waste</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f7f5;
             margin: 0;
-            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: #f1f8f6;
+            color: #222;
+        }
+
+        header {
+            background: #176b5b;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        header p {
+            margin: 6px 0 0;
         }
 
         .container {
-            max-width: 900px;
-            margin: auto;
+            width: 92%;
+            max-width: 850px;
+            margin: 25px auto;
         }
 
-        h1 {
-            text-align: center;
-            color: #176b5b;
-        }
-
-        .cards {
-            display: flex;
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .box {
-            flex: 1;
+        .card {
             background: white;
-            padding: 25px;
-            text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            padding: 22px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.10);
         }
 
-        .box h2 {
-            margin: 5px;
+        h2 {
             color: #176b5b;
+            margin-top: 0;
         }
 
-        .details {
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
             background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.10);
         }
 
-        .details p {
-            font-size: 18px;
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #176b5b;
+            margin-top: 8px;
+        }
+
+        .info-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .status {
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 7px;
+            background: #fff3cd;
+            font-weight: bold;
+        }
+
+        .no-request {
+            text-align: center;
+            color: #777;
+            padding: 20px;
         }
 
         button {
-            background-color: #176b5b;
-            color: white;
+            width: 100%;
+            padding: 13px;
+            margin-top: 15px;
             border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
+            border-radius: 7px;
+            color: white;
+            background: #176b5b;
+            font-size: 15px;
             cursor: pointer;
         }
 
-        .logout {
-            background-color: #777;
+        .refresh-button {
+            background: #2868a6;
+        }
+
+        .logout-button {
+            background: #c0392b;
+        }
+
+        @media (max-width: 600px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
 
+<header>
+    <h1>📊 SMART MEDICAL WASTE</h1>
+    <p>Admin Dashboard</p>
+</header>
+
+
 <div class="container">
 
-    <h1>📊 ADMIN DASHBOARD</h1>
+    <!-- STATISTICS -->
 
-    <button class="logout" onclick="logout()">Logout</button>
+    <div class="stats">
 
-    <div class="cards">
-
-        <div class="box">
-            <h2 id="totalRequests">0</h2>
-            <p>Total Requests</p>
+        <div class="stat-card">
+            <div>Total Requests</div>
+            <div class="stat-number" id="totalRequests">0</div>
         </div>
 
-        <div class="box">
-            <h2 id="pending">0</h2>
-            <p>Pending</p>
+        <div class="stat-card">
+            <div>Pending</div>
+            <div class="stat-number" id="pendingRequests">0</div>
         </div>
 
-        <div class="box">
-            <h2 id="completed">0</h2>
-            <p>Completed</p>
+        <div class="stat-card">
+            <div>Completed</div>
+            <div class="stat-number" id="completedRequests">0</div>
         </div>
 
     </div>
 
-    <div class="details">
 
-        <h2>Collection Details</h2>
+    <!-- CURRENT REQUEST -->
 
-        <p><b>Hospital:</b> <span id="adminHospital">No request</span></p>
+    <div class="card">
 
-        <p><b>Waste Type:</b> <span id="adminWaste">No request</span></p>
+        <h2>📋 Current Collection Request</h2>
 
-        <p><b>Quantity:</b> <span id="adminQuantity">No request</span></p>
+        <div id="noRequest" class="no-request">
+            No active collection request.
+        </div>
 
-        <p><b>Location:</b> <span id="adminLocation">No request</span></p>
 
-        <p><b>Status:</b> <span id="adminStatus">No request</span></p>
+        <div id="requestDetails" style="display:none;">
+
+            <div class="info-row">
+                <b>Request ID:</b>
+                <span id="requestId">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Hospital:</b>
+                <span id="hospital">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Waste Type:</b>
+                <span id="waste">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Quantity:</b>
+                <span id="quantity">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Collection Location:</b>
+                <span id="location">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>AI Category:</b>
+                <span id="aiCategory">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>AI Confidence:</b>
+                <span id="aiConfidence">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Request Created:</b>
+                <span id="requestTime">-</span>
+            </div>
+
+            <div class="status">
+                Collection Status:
+                <span id="status">Pending</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REFRESH -->
+
+    <div class="card">
+
+        <button
+            class="refresh-button"
+            onclick="loadDashboard()">
+            🔄 Refresh Dashboard
+        </button>
+
+    </div>
+
+
+    <!-- LOGOUT -->
+
+    <div class="card">
+
+        <button
+            class="logout-button"
+            onclick="logout()">
+            🚪 Logout
+        </button>
 
     </div>
 
 </div>
 
+
 <script>
 
-function logout() {
-    window.location.href = "login.html";
-}
+    // =========================
+    // LOAD DASHBOARD
+    // =========================
 
-window.onload = function() {
+    function loadDashboard() {
 
-    let hospital = localStorage.getItem("hospital");
-    let waste = localStorage.getItem("waste");
-    let quantity = localStorage.getItem("quantity");
-    let location = localStorage.getItem("location");
+        let activeRequest =
+            localStorage.getItem("activeRequest");
 
-    if (hospital) {
 
-        document.getElementById("adminHospital").innerHTML = hospital;
-        document.getElementById("adminWaste").innerHTML = waste;
-        document.getElementById("adminQuantity").innerHTML = quantity + " kg";
-        document.getElementById("adminLocation").innerHTML = location;
-        document.getElementById("adminStatus").innerHTML = "Request Submitted";
+        let status =
+            localStorage.getItem("collectionStatus")
+            || "Pending";
 
-        document.getElementById("totalRequests").innerHTML = "1";
-        document.getElementById("pending").innerHTML = "1";
-        document.getElementById("completed").innerHTML = "0";
+
+        // =========================
+        // NO ACTIVE REQUEST
+        // =========================
+
+        if (activeRequest !== "true") {
+
+            document.getElementById(
+                "noRequest"
+            ).style.display = "block";
+
+            document.getElementById(
+                "requestDetails"
+            ).style.display = "none";
+
+            document.getElementById(
+                "totalRequests"
+            ).innerText = "0";
+
+            document.getElementById(
+                "pendingRequests"
+            ).innerText = "0";
+
+            document.getElementById(
+                "completedRequests"
+            ).innerText = "0";
+
+            return;
+        }
+
+
+        // =========================
+        // SHOW REQUEST
+        // =========================
+
+        document.getElementById(
+            "noRequest"
+        ).style.display = "none";
+
+        document.getElementById(
+            "requestDetails"
+        ).style.display = "block";
+
+
+        // =========================
+        // REQUEST DETAILS
+        // =========================
+
+        document.getElementById(
+            "requestId"
+        ).innerText =
+            localStorage.getItem("requestId") || "-";
+
+
+        document.getElementById(
+            "hospital"
+        ).innerText =
+            localStorage.getItem("hospital") || "-";
+
+
+        document.getElementById(
+            "waste"
+        ).innerText =
+            localStorage.getItem("waste") || "-";
+
+
+        document.getElementById(
+            "quantity"
+        ).innerText =
+            localStorage.getItem("quantity") || "-";
+
+
+        document.getElementById(
+            "location"
+        ).innerText =
+            localStorage.getItem("location") || "-";
+
+
+        document.getElementById(
+            "aiCategory"
+        ).innerText =
+            localStorage.getItem("requestAICategory")
+            || localStorage.getItem("aiWasteCategory")
+            || "-";
+
+
+        document.getElementById(
+            "aiConfidence"
+        ).innerText =
+            localStorage.getItem("requestAIConfidence")
+            || localStorage.getItem("aiConfidence")
+            || "-";
+
+
+        document.getElementById(
+            "requestTime"
+        ).innerText =
+            localStorage.getItem("requestTime") || "-";
+
+
+        document.getElementById(
+            "status"
+        ).innerText = status;
+
+
+        // =========================
+        // STATISTICS
+        // =========================
+
+        document.getElementById(
+            "totalRequests"
+        ).innerText = "1";
+
+
+        if (status === "Completed") {
+
+            document.getElementById(
+                "pendingRequests"
+            ).innerText = "0";
+
+            document.getElementById(
+                "completedRequests"
+            ).innerText = "1";
+
+        }
+
+        else {
+
+            document.getElementById(
+                "pendingRequests"
+            ).innerText = "1";
+
+            document.getElementById(
+                "completedRequests"
+            ).innerText = "0";
+        }
+
     }
 
-};
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    function logout() {
+
+        localStorage.removeItem("loggedIn");
+
+        localStorage.removeItem("userRole");
+
+        window.location.href =
+            "login.html";
+    }
+
+
+    // =========================
+    // AUTO UPDATE
+    // =========================
+
+    setInterval(function() {
+
+        loadDashboard();
+
+    }, 1000);
+
+
+    // FIRST LOAD
+
+    loadDashboard();
 
 </script>
 
