@@ -1,146 +1,447 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Waste Collector</title>
+    <title>Collector - Smart Medical Waste Management</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f7f7;
             margin: 0;
-            padding: 40px;
+            font-family: Arial, sans-serif;
+            background: #f1f8f6;
+            color: #222;
+        }
+
+        header {
+            background: #176b5b;
+            color: white;
+            padding: 18px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        header p {
+            margin: 6px 0 0;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 700px;
+            margin: 25px auto;
         }
 
         .card {
-            max-width: 700px;
-            margin: auto;
             background: white;
-            padding: 30px;
+            padding: 22px;
+            margin-bottom: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        h1 {
-            text-align: center;
-            color: #173f3f;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.10);
         }
 
         h2 {
-            color: #176b6b;
-            border-bottom: 2px solid #176b6b;
-            padding-bottom: 10px;
+            color: #176b5b;
+            margin-top: 0;
         }
 
-        p {
-            font-size: 18px;
-            margin: 18px 0;
+        .info-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 7px;
+            background: #fff3cd;
+            font-weight: bold;
         }
 
         button {
-            background-color: #168b8b;
-            color: white;
+            width: 100%;
+            padding: 13px;
+            margin-top: 15px;
             border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
+            border-radius: 7px;
+            color: white;
+            font-size: 15px;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
+        }
+
+        .accept-button {
+            background: #176b5b;
+        }
+
+        .complete-button {
+            background: #2878b5;
+        }
+
+        .qr-button {
+            background: #7048a8;
+        }
+
+        .logout-button {
+            background: #c0392b;
         }
 
         button:hover {
-            background-color: #0f6f6f;
+            opacity: 0.9;
         }
 
-        .logout {
-            background-color: #777;
-        }
-
-        .logout:hover {
-            background-color: #555;
-        }
-
-        #status {
-            font-weight: bold;
+        .no-request {
+            text-align: center;
+            color: #777;
+            padding: 20px;
         }
     </style>
 </head>
 
 <body>
 
-<div class="card">
+<header>
+    <h1>🚚 SMART MEDICAL WASTE</h1>
+    <p>Waste Collector Portal</p>
+</header>
 
-    <h1>🚚 WASTE COLLECTOR</h1>
 
-    <button class="logout" onclick="logout()">Logout</button>
+<div class="container">
 
-    <h2>Collection Request</h2>
+    <!-- COLLECTION REQUEST -->
 
-    <p>
-        <b>Hospital:</b>
-        <span id="hospital">Waiting for request</span>
-    </p>
+    <div class="card">
 
-    <p>
-        <b>Waste Type:</b>
-        <span id="waste">Waiting for request</span>
-    </p>
+        <h2>📋 Collection Request</h2>
 
-    <p>
-        <b>Quantity:</b>
-        <span id="quantity">Waiting for request</span>
-    </p>
+        <div id="noRequest" class="no-request">
+            No active collection request.
+        </div>
 
-    <p>
-        <b>Location:</b>
-        <span id="location">Waiting for request</span>
-    </p>
 
-    <button onclick="acceptRequest()">Accept Request</button>
+        <div id="requestDetails" style="display:none;">
 
-    <p id="status">
-        <b>Status:</b> Waiting for request
-    </p>
+            <div class="info-row">
+                <b>Request ID:</b>
+                <span id="requestId">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Hospital Name:</b>
+                <span id="hospital">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Waste Type:</b>
+                <span id="waste">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Quantity:</b>
+                <span id="quantity">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>Collection Location:</b>
+                <span id="location">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>AI Category:</b>
+                <span id="aiCategory">-</span>
+            </div>
+
+            <div class="info-row">
+                <b>AI Confidence:</b>
+                <span id="aiConfidence">-</span>
+            </div>
+
+
+            <div class="status">
+                Status:
+                <span id="status">Pending</span>
+            </div>
+
+
+            <button
+                class="accept-button"
+                onclick="acceptRequest()">
+                ✅ Accept Collection
+            </button>
+
+
+            <button
+                class="complete-button"
+                onclick="completeRequest()">
+                ✔️ Mark as Completed
+            </button>
+
+
+            <button
+                class="qr-button"
+                onclick="openQR()">
+                📱 QR Verification
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOGOUT -->
+
+    <div class="card">
+
+        <button
+            class="logout-button"
+            onclick="logout()">
+            🚪 Logout
+        </button>
+
+    </div>
 
 </div>
 
+
 <script>
 
-function logout() {
-    window.location.href = "login.html";
-}
+    // =========================
+    // LOAD COLLECTION REQUEST
+    // =========================
 
-function loadRequest() {
+    function loadRequest() {
 
-    let hospital = localStorage.getItem("hospital");
-    let waste = localStorage.getItem("waste");
-    let quantity = localStorage.getItem("quantity");
-    let location = localStorage.getItem("location");
+        let activeRequest =
+            localStorage.getItem("activeRequest");
 
-    if (hospital) {
-        document.getElementById("hospital").innerHTML = hospital;
-        document.getElementById("waste").innerHTML = waste;
-        document.getElementById("quantity").innerHTML = quantity + " kg";
-        document.getElementById("location").innerHTML = location;
-        document.getElementById("status").innerHTML =
-            "<b>Status:</b> Request Received";
+
+        if (activeRequest !== "true") {
+
+            document.getElementById(
+                "noRequest"
+            ).style.display = "block";
+
+            document.getElementById(
+                "requestDetails"
+            ).style.display = "none";
+
+            return;
+        }
+
+
+        document.getElementById(
+            "noRequest"
+        ).style.display = "none";
+
+        document.getElementById(
+            "requestDetails"
+        ).style.display = "block";
+
+
+        // Request ID
+
+        document.getElementById(
+            "requestId"
+        ).innerText =
+            localStorage.getItem("requestId") || "-";
+
+
+        // Hospital
+
+        document.getElementById(
+            "hospital"
+        ).innerText =
+            localStorage.getItem("hospital") || "-";
+
+
+        // Waste
+
+        document.getElementById(
+            "waste"
+        ).innerText =
+            localStorage.getItem("waste") || "-";
+
+
+        // Quantity
+
+        document.getElementById(
+            "quantity"
+        ).innerText =
+            localStorage.getItem("quantity") || "-";
+
+
+        // Location
+
+        document.getElementById(
+            "location"
+        ).innerText =
+            localStorage.getItem("location") || "-";
+
+
+        // AI Category
+
+        document.getElementById(
+            "aiCategory"
+        ).innerText =
+            localStorage.getItem("requestAICategory")
+            || localStorage.getItem("aiWasteCategory")
+            || "-";
+
+
+        // AI Confidence
+
+        document.getElementById(
+            "aiConfidence"
+        ).innerText =
+            localStorage.getItem("requestAIConfidence")
+            || localStorage.getItem("aiConfidence")
+            || "-";
+
+
+        // Status
+
+        updateStatus();
     }
-}
 
-function acceptRequest() {
 
-    let hospital = localStorage.getItem("hospital");
+    // =========================
+    // UPDATE STATUS
+    // =========================
 
-    if (hospital) {
-        document.getElementById("status").innerHTML =
-            "<b>Status:</b> Collection Accepted";
+    function updateStatus() {
 
-        alert("Collection Request Accepted!");
-    } else {
-        alert("No collection request available!");
+        let status =
+            localStorage.getItem("collectionStatus")
+            || "Pending";
+
+
+        document.getElementById(
+            "status"
+        ).innerText = status;
     }
-}
 
-window.onload = loadRequest;
+
+    // =========================
+    // ACCEPT REQUEST
+    // =========================
+
+    function acceptRequest() {
+
+        let activeRequest =
+            localStorage.getItem("activeRequest");
+
+
+        if (activeRequest !== "true") {
+
+            alert("No active collection request.");
+
+            return;
+        }
+
+
+        localStorage.setItem(
+            "collectionStatus",
+            "Collection Accepted"
+        );
+
+
+        updateStatus();
+
+
+        alert(
+            "Collection Request Accepted!"
+        );
+    }
+
+
+    // =========================
+    // COMPLETE REQUEST
+    // =========================
+
+    function completeRequest() {
+
+        let activeRequest =
+            localStorage.getItem("activeRequest");
+
+
+        if (activeRequest !== "true") {
+
+            alert("No active collection request.");
+
+            return;
+        }
+
+
+        localStorage.setItem(
+            "collectionStatus",
+            "Completed"
+        );
+
+
+        updateStatus();
+
+
+        alert(
+            "Waste Collection Completed!"
+        );
+    }
+
+
+    // =========================
+    // OPEN QR PAGE
+    // =========================
+
+    function openQR() {
+
+        let activeRequest =
+            localStorage.getItem("activeRequest");
+
+
+        if (activeRequest !== "true") {
+
+            alert("No active collection request.");
+
+            return;
+        }
+
+
+        window.location.href = "qr.html";
+    }
+
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    function logout() {
+
+        localStorage.removeItem("loggedIn");
+
+        localStorage.removeItem("userRole");
+
+        window.location.href =
+            "login.html";
+    }
+
+
+    // =========================
+    // AUTO UPDATE
+    // =========================
+
+    setInterval(function() {
+
+        loadRequest();
+
+    }, 1000);
+
+
+    // FIRST LOAD
+
+    loadRequest();
 
 </script>
 
