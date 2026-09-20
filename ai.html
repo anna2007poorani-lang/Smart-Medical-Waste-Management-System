@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Medical Waste Identification</title>
+
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+
+    <!-- Teachable Machine Image Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+
+<body>
+
+    <h1>AI Medical Waste Identification</h1>
+
+    <p>Upload a safe sample waste image for AI-based classification.</p>
+
+    <input type="file" id="wasteImage" accept="image/*">
+
+    <br><br>
+
+    <img id="preview"
+         width="300"
+         style="display:none; border-radius:10px;">
+
+    <br><br>
+
+    <button onclick="classifyWaste()">Analyze Waste</button>
+
+    <div id="result"
+         style="display:none;
+                margin-top:25px;
+                padding:20px;
+                border-radius:15px;
+                background:#f4f9f7;">
+
+        <h2>AI Analysis Result</h2>
+        <br>
+
+<button onclick="window.location.href='hospital.html'">
+    Submit Collection Request
+</button>
+
+        <p>
+            <b>Waste Category:</b>
+            <span id="wasteCategory">-</span>
+        </p>
+
+        <p>
+            <b>Confidence Score:</b>
+            <span id="confidence">-</span>
+        </p>
+
+        <p>
+            <b>Recommended Compartment:</b>
+            <span id="compartment">-</span>
+        </p>
+
+        <p>
+            <b>Verification Status:</b>
+            <span id="verification">-</span>
+        </p>
+
+        <p>
+            <b>Collection Priority:</b>
+            <span id="priority">-</span>
+        </p>
+
+    </div>
+
+
+<script>
+
+    // Your Teachable Machine model
+    const MODEL_URL =
+        "https://teachablemachine.withgoogle.com/models/3yeCRftBa/";
+
+    let model;
+
+    // Load AI model
+    async function loadModel() {
+
+        const modelURL = MODEL_URL + "model.json";
+        const metadataURL = MODEL_URL + "metadata.json";
+
+        model = await tmImage.load(modelURL, metadataURL);
+
+        console.log("AI Model Loaded Successfully");
+    }
+
+
+    // Show uploaded image
+    document.getElementById("wasteImage").addEventListener("change", function() {
+
+        let file = this.files[0];
+
+        if (file) {
+
+            let imageURL = URL.createObjectURL(file);
+
+            let preview = document.getElementById("preview");
+
+            preview.src = imageURL;
+
+            preview.style.display = "block";
+        }
+    });
+
+
+    // AI Classification
+    async function classifyWaste() {
+
+        let image = document.getElementById("wasteImage").files[0];
+
+        if (!image) {
+
+            alert("Please upload an image!");
+
+            return;
+        }
+
+
+        if (!model) {
+
+            await loadModel();
+        }
+
+
+        let preview = document.getElementById("preview");
+
+
+        // AI prediction
+        const prediction = await model.predict(preview);
+
+
+        let highestPrediction = prediction[0];
+
+        for (let i = 1; i < prediction.length; i++) {
+
+            if (prediction[i].probability >
+                highestPrediction.probability) {
+
+                highestPrediction = prediction[i];
+            }
+        }
+
+
+        let category = highestPrediction.className;
+
+        let confidence =
+            (highestPrediction.probability * 100).toFixed(2);
+
+
+        // Show result
+        document.getElementById("result").style.display = "block";
+
+
+        // Medical Gloves
+        if (category === "Medical Gloves") {
+
+            document.getElementById("wasteCategory").innerText =
+                "Medical Gloves";
+
+            document.getElementById("compartment").innerText =
+                "Yellow Compartment";
+
+            document.getElementById("verification").innerText =
+                "Verified - Medical Gloves";
+
+            document.getElementById("priority").innerText =
+                "Normal";
+        }
+
+
+        // Syringe
+        else if (category === "Syringe") {
+
+            document.getElementById("wasteCategory").innerText =
+                "Sharps";
+
+            document.getElementById("compartment").innerText =
+                "White / Translucent Compartment";
+
+            document.getElementById("verification").innerText =
+                "Verified - Sharps";
+
+            document.getElementById("priority").innerText =
+                "High Priority";
+        }
+
+
+        // Confidence
+        document.getElementById("confidence").innerText =
+            confidence + "%";
+            localStorage.setItem("aiWasteCategory", category);
+localStorage.setItem("aiConfidence", confidence);
+    }
+
+</script>
+
+</body>
+</html>
