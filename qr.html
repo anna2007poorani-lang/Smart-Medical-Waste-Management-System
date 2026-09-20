@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Verification - Smart Medical Waste</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f8f6;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #176b5b;
+        }
+
+        .details {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .details p {
+            margin: 10px 0;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .verified {
+            text-align: center;
+            color: #176b5b;
+            background: #d8f3dc;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #176b5b;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d4d42;
+        }
+
+        .logout {
+            background: #c0392b;
+        }
+
+        .logout:hover {
+            background: #922b21;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📱 QR Verification</h1>
+
+    <div class="details">
+
+        <p>
+            <b>Request ID:</b>
+            <span id="requestId"></span>
+        </p>
+
+        <p>
+            <b>Hospital:</b>
+            <span id="hospital"></span>
+        </p>
+
+        <p>
+            <b>Waste Type:</b>
+            <span id="waste"></span>
+        </p>
+
+        <p>
+            <b>Quantity:</b>
+            <span id="quantity"></span>
+        </p>
+
+        <p>
+            <b>Location:</b>
+            <span id="location"></span>
+        </p>
+
+        <p>
+            <b>Status:</b>
+            <span id="status"></span>
+        </p>
+
+    </div>
+
+    <div id="qrcode"></div>
+
+    <div class="verified" id="verificationStatus">
+        ⏳ Verification Pending
+        <br>
+        <span style="font-weight: normal;">
+            Scan this QR code to verify the request.
+        </span>
+    </div>
+
+    <button onclick="goBack()">
+        ← Back
+    </button>
+
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
+
+</div>
+
+<script>
+
+let requestId = localStorage.getItem("requestId");
+
+let hospital = localStorage.getItem("hospital");
+let waste = localStorage.getItem("waste");
+let quantity = localStorage.getItem("quantity");
+let locationData = localStorage.getItem("location");
+let status = localStorage.getItem("collectionStatus");
+
+document.getElementById("requestId").innerText =
+    requestId || "Not Available";
+
+document.getElementById("hospital").innerText =
+    hospital || "Not Available";
+
+document.getElementById("waste").innerText =
+    waste || "Not Available";
+
+document.getElementById("quantity").innerText =
+    quantity || "Not Available";
+
+document.getElementById("location").innerText =
+    locationData || "Not Available";
+
+document.getElementById("status").innerText =
+    status || "Pending";
+
+
+/* Online verification link */
+
+let verificationLink =
+    "https://anna2007poorani-lang.github.io/Smart-Medical-Waste-Management-System/verify.html?requestId="
+    + requestId;
+
+
+/* Generate QR */
+
+if (requestId) {
+
+    new QRCode(
+        document.getElementById("qrcode"),
+        verificationLink
+    );
+
+}
+
+
+function goBack() {
+
+    window.location.href = "collector.html";
+
+}
+
+
+function logout() {
+
+    localStorage.clear();
+
+    window.location.href = "login.html";
+
+}
+
+</script>
+
+</body>
+</html>
