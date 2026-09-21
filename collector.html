@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Collector - Smart Medical Waste Management</title>
+
+    <title>Waste Collector Portal</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -12,37 +16,32 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background: #f1f8f6;
-            color: #222;
+            color: #333;
         }
 
-        header {
+        .header {
             background: #176b5b;
             color: white;
-            padding: 18px;
             text-align: center;
+            padding: 22px;
         }
 
-        header h1 {
+        .header h1 {
             margin: 0;
-            font-size: 25px;
-        }
-
-        header p {
-            margin: 6px 0 0;
         }
 
         .container {
-            width: 92%;
-            max-width: 700px;
-            margin: 25px auto;
+            max-width: 750px;
+            margin: auto;
+            padding: 18px;
         }
 
         .card {
             background: white;
-            padding: 22px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+            padding: 20px;
+            margin-bottom: 18px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.12);
         }
 
         h2 {
@@ -50,142 +49,410 @@
             margin-top: 0;
         }
 
-        .info-row {
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-box {
+            background: #f5f9f8;
+            padding: 13px;
+            border-radius: 9px;
+        }
+
+        .info-box small {
+            color: #777;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-top: 5px;
+            color: #176b5b;
         }
 
         .status {
+            text-align: center;
+            padding: 16px;
+            border-radius: 10px;
+            background: #fff4cc;
+            font-weight: bold;
+            font-size: 18px;
             margin-top: 15px;
-            padding: 13px;
-            border-radius: 7px;
-            background: #fff3cd;
+        }
+
+        .ai-box {
+            background: #eef8f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .priority {
+            display: inline-block;
+            background: #ffe0e0;
+            color: #c0392b;
+            padding: 7px 12px;
+            border-radius: 20px;
             font-weight: bold;
         }
 
         button {
             width: 100%;
-            padding: 13px;
-            margin-top: 15px;
+            padding: 14px;
+            margin-top: 10px;
             border: none;
-            border-radius: 7px;
+            border-radius: 9px;
+            background: #176b5b;
             color: white;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
         }
 
-        .accept-button {
-            background: #176b5b;
+        button:hover {
+            background: #0d4d42;
         }
 
-        .complete-button {
-            background: #2878b5;
+        .track-btn {
+            background: #2980b9;
         }
 
-        .qr-button {
-            background: #7048a8;
+        .qr-btn {
+            background: #8e44ad;
         }
 
-        .logout-button {
+        .collect-btn {
+            background: #27ae60;
+        }
+
+        .complete-btn {
+            background: #16a085;
+        }
+
+        .logout {
             background: #c0392b;
         }
 
-        button:hover {
-            opacity: 0.9;
+        .logout:hover {
+            background: #922b21;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        .timeline {
+            margin-top: 10px;
+        }
+
+        .step {
+            padding: 13px;
+            margin: 8px 0;
+            border-radius: 8px;
+            background: #eeeeee;
+        }
+
+        .completed {
+            background: #d8f3dc;
+            color: #176b5b;
+            font-weight: bold;
+        }
+
+        .active {
+            background: #fff4cc;
+            font-weight: bold;
         }
 
         .no-request {
             text-align: center;
+            padding: 35px;
             color: #777;
-            padding: 20px;
         }
+
+        @media(max-width:600px) {
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
     </style>
+
 </head>
 
 <body>
 
-<header>
-    <h1>🚚 SMART MEDICAL WASTE</h1>
-    <p>Waste Collector Portal</p>
-</header>
+<div class="header">
+
+    <h1>🚚 Waste Collector Portal</h1>
+
+    <p>Smart Medical Waste Management System</p>
+
+</div>
 
 
 <div class="container">
 
-    <!-- COLLECTION REQUEST -->
 
-    <div class="card">
+    <!-- NO REQUEST -->
+
+    <div class="card" id="noRequest">
+
+        <div class="no-request">
+
+            <h2>📭 No Active Request</h2>
+
+            <p>
+                There is currently no collection request.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- REQUEST -->
+
+    <div class="card hidden" id="requestCard">
 
         <h2>📋 Collection Request</h2>
 
-        <div id="noRequest" class="no-request">
-            No active collection request.
+
+        <div class="info-grid">
+
+            <div class="info-box">
+                <small>Request ID</small>
+                <strong id="requestId"></strong>
+            </div>
+
+            <div class="info-box">
+                <small>Hospital</small>
+                <strong id="hospital"></strong>
+            </div>
+
+            <div class="info-box">
+                <small>Waste Type</small>
+                <strong id="waste"></strong>
+            </div>
+
+            <div class="info-box">
+                <small>Quantity</small>
+                <strong id="quantity"></strong>
+            </div>
+
+            <div class="info-box">
+                <small>Location</small>
+                <strong id="location"></strong>
+            </div>
+
+            <div class="info-box">
+                <small>Request Time</small>
+                <strong id="requestTime"></strong>
+            </div>
+
         </div>
 
 
-        <div id="requestDetails" style="display:none;">
+        <div class="status" id="status">
 
-            <div class="info-row">
-                <b>Request ID:</b>
-                <span id="requestId">-</span>
-            </div>
+            ⏳ Pending
 
-            <div class="info-row">
-                <b>Hospital Name:</b>
-                <span id="hospital">-</span>
-            </div>
+        </div>
 
-            <div class="info-row">
-                <b>Waste Type:</b>
-                <span id="waste">-</span>
-            </div>
+    </div>
 
-            <div class="info-row">
-                <b>Quantity:</b>
-                <span id="quantity">-</span>
-            </div>
 
-            <div class="info-row">
-                <b>Collection Location:</b>
-                <span id="location">-</span>
-            </div>
+    <!-- AI -->
 
-            <div class="info-row">
-                <b>AI Category:</b>
-                <span id="aiCategory">-</span>
-            </div>
+    <div class="card hidden" id="aiCard">
 
-            <div class="info-row">
+        <h2>🤖 AI Waste Classification</h2>
+
+        <div class="ai-box">
+
+            <p>
+                <b>Waste Category:</b>
+                <span id="aiCategory">
+                    Not Classified
+                </span>
+            </p>
+
+            <p>
                 <b>AI Confidence:</b>
-                <span id="aiConfidence">-</span>
+                <span id="aiConfidence">
+                    Not Available
+                </span>
+            </p>
+
+            <p>
+                <b>Priority:</b>
+                <span class="priority" id="priority">
+                    Normal
+                </span>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="card hidden" id="actionsCard">
+
+        <h2>⚙️ Collection Actions</h2>
+
+
+        <button
+            id="acceptBtn"
+            onclick="acceptRequest()">
+
+            ✅ Accept Collection
+
+        </button>
+
+
+        <button
+            id="journeyBtn"
+            class="track-btn"
+            onclick="startJourney()">
+
+            🚚 Start Journey
+
+        </button>
+
+
+        <button
+            id="reachedBtn"
+            onclick="reachHospital()">
+
+            🏥 Reached Hospital
+
+        </button>
+
+
+        <button
+            id="collectBtn"
+            class="collect-btn"
+            onclick="collectWaste()">
+
+            ♻️ Waste Collected
+
+        </button>
+
+
+        <button
+            id="completeBtn"
+            class="complete-btn"
+            onclick="completeCollection()">
+
+            ✅ Complete Collection
+
+        </button>
+
+
+        <button
+            class="track-btn"
+            onclick="openTracking()">
+
+            📍 Track Collection
+
+        </button>
+
+
+        <button
+            class="qr-btn"
+            onclick="openQR()">
+
+            📱 QR Verification
+
+        </button>
+
+
+        <div
+            class="message"
+            id="message">
+        </div>
+
+    </div>
+
+
+    <!-- TIMELINE -->
+
+    <div class="card hidden" id="timelineCard">
+
+        <h2>📋 Collection Timeline</h2>
+
+
+        <div class="timeline">
+
+            <div
+                class="step completed"
+                id="step1">
+
+                ✅ Request Created
+
             </div>
 
 
-            <div class="status">
-                Status:
-                <span id="status">Pending</span>
+            <div
+                class="step completed"
+                id="step2">
+
+                ✅ AI Waste Classification
+
             </div>
 
 
-            <button
-                class="accept-button"
-                onclick="acceptRequest()">
-                ✅ Accept Collection
-            </button>
+            <div
+                class="step"
+                id="step3">
+
+                ⚪ Collector Accepted
+
+            </div>
 
 
-            <button
-                class="complete-button"
-                onclick="completeRequest()">
-                ✔️ Mark as Completed
-            </button>
+            <div
+                class="step"
+                id="step4">
+
+                ⚪ Collector On The Way
+
+            </div>
 
 
-            <button
-                class="qr-button"
-                onclick="openQR()">
-                📱 QR Verification
-            </button>
+            <div
+                class="step"
+                id="step5">
+
+                ⚪ Reached Hospital
+
+            </div>
+
+
+            <div
+                class="step"
+                id="step6">
+
+                ⚪ Waste Collected
+
+            </div>
+
+
+            <div
+                class="step"
+                id="step7">
+
+                ⚪ Collection Completed
+
+            </div>
 
         </div>
 
@@ -197,251 +464,430 @@
     <div class="card">
 
         <button
-            class="logout-button"
+            class="logout"
             onclick="logout()">
+
             🚪 Logout
+
         </button>
 
     </div>
+
 
 </div>
 
 
 <script>
 
-    // =========================
-    // LOAD COLLECTION REQUEST
-    // =========================
 
-    function loadRequest() {
+/* LOAD REQUEST */
 
-        let activeRequest =
-            localStorage.getItem("activeRequest");
+function loadRequest() {
 
-
-        if (activeRequest !== "true") {
-
-            document.getElementById(
-                "noRequest"
-            ).style.display = "block";
-
-            document.getElementById(
-                "requestDetails"
-            ).style.display = "none";
-
-            return;
-        }
+    let activeRequest =
+        localStorage.getItem("activeRequest");
 
 
-        document.getElementById(
-            "noRequest"
-        ).style.display = "none";
+    if (activeRequest !== "true") {
 
-        document.getElementById(
-            "requestDetails"
-        ).style.display = "block";
+        document.getElementById("noRequest")
+            .classList.remove("hidden");
 
+        document.getElementById("requestCard")
+            .classList.add("hidden");
 
-        // Request ID
+        document.getElementById("aiCard")
+            .classList.add("hidden");
 
-        document.getElementById(
-            "requestId"
-        ).innerText =
-            localStorage.getItem("requestId") || "-";
+        document.getElementById("actionsCard")
+            .classList.add("hidden");
 
+        document.getElementById("timelineCard")
+            .classList.add("hidden");
 
-        // Hospital
+        return;
 
-        document.getElementById(
-            "hospital"
-        ).innerText =
-            localStorage.getItem("hospital") || "-";
-
-
-        // Waste
-
-        document.getElementById(
-            "waste"
-        ).innerText =
-            localStorage.getItem("waste") || "-";
-
-
-        // Quantity
-
-        document.getElementById(
-            "quantity"
-        ).innerText =
-            localStorage.getItem("quantity") || "-";
-
-
-        // Location
-
-        document.getElementById(
-            "location"
-        ).innerText =
-            localStorage.getItem("location") || "-";
-
-
-        // AI Category
-
-        document.getElementById(
-            "aiCategory"
-        ).innerText =
-            localStorage.getItem("requestAICategory")
-            || localStorage.getItem("aiWasteCategory")
-            || "-";
-
-
-        // AI Confidence
-
-        document.getElementById(
-            "aiConfidence"
-        ).innerText =
-            localStorage.getItem("requestAIConfidence")
-            || localStorage.getItem("aiConfidence")
-            || "-";
-
-
-        // Status
-
-        updateStatus();
     }
 
 
-    // =========================
-    // UPDATE STATUS
-    // =========================
+    document.getElementById("noRequest")
+        .classList.add("hidden");
 
-    function updateStatus() {
+    document.getElementById("requestCard")
+        .classList.remove("hidden");
 
-        let status =
-            localStorage.getItem("collectionStatus")
-            || "Pending";
+    document.getElementById("aiCard")
+        .classList.remove("hidden");
+
+    document.getElementById("actionsCard")
+        .classList.remove("hidden");
+
+    document.getElementById("timelineCard")
+        .classList.remove("hidden");
 
 
-        document.getElementById(
-            "status"
-        ).innerText = status;
+    document.getElementById("requestId").innerText =
+        localStorage.getItem("requestId") || "Not Available";
+
+
+    document.getElementById("hospital").innerText =
+        localStorage.getItem("hospital") || "Not Available";
+
+
+    document.getElementById("waste").innerText =
+        localStorage.getItem("waste") || "Not Available";
+
+
+    document.getElementById("quantity").innerText =
+        localStorage.getItem("quantity") || "Not Available";
+
+
+    document.getElementById("location").innerText =
+        localStorage.getItem("location") || "Not Available";
+
+
+    document.getElementById("requestTime").innerText =
+        localStorage.getItem("requestTime") || "Not Available";
+
+
+    document.getElementById("aiCategory").innerText =
+        localStorage.getItem("requestAICategory") ||
+        "Not Classified";
+
+
+    let confidence =
+        localStorage.getItem("requestAIConfidence");
+
+    document.getElementById("aiConfidence").innerText =
+        confidence ? confidence + "%" : "Not Available";
+
+
+    updateStatus();
+
+}
+
+
+/* ACCEPT */
+
+function acceptRequest() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Collection Accepted"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "Collector Accepted"
+    );
+
+    showMessage(
+        "✅ Collection request accepted."
+    );
+
+    updateStatus();
+
+}
+
+
+/* START JOURNEY */
+
+function startJourney() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Collector On The Way"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "On The Way"
+    );
+
+    localStorage.setItem(
+        "collectorLocation",
+        "Near Hospital"
+    );
+
+    localStorage.setItem(
+        "trackingETA",
+        "8 minutes"
+    );
+
+    showMessage(
+        "🚚 Collector journey started."
+    );
+
+    updateStatus();
+
+}
+
+
+/* REACHED */
+
+function reachHospital() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Reached Hospital"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "Reached Hospital"
+    );
+
+    localStorage.setItem(
+        "collectorLocation",
+        "At Hospital"
+    );
+
+    localStorage.setItem(
+        "trackingETA",
+        "Arrived"
+    );
+
+    showMessage(
+        "🏥 Collector reached the hospital."
+    );
+
+    updateStatus();
+
+}
+
+
+/* COLLECT */
+
+function collectWaste() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Waste Collected"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "Waste Collected"
+    );
+
+    localStorage.setItem(
+        "collectorLocation",
+        "Collection Point"
+    );
+
+    localStorage.setItem(
+        "trackingETA",
+        "Completed"
+    );
+
+    showMessage(
+        "♻️ Waste collection recorded."
+    );
+
+    updateStatus();
+
+}
+
+
+/* COMPLETE */
+
+function completeCollection() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Completed"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "Collection Completed"
+    );
+
+    localStorage.setItem(
+        "collectorLocation",
+        "Collection Completed"
+    );
+
+    localStorage.setItem(
+        "trackingETA",
+        "Completed"
+    );
+
+    showMessage(
+        "✅ Collection completed successfully."
+    );
+
+    updateStatus();
+
+}
+
+
+/* STATUS */
+
+function updateStatus() {
+
+    let status =
+        localStorage.getItem("collectionStatus") ||
+        "Pending";
+
+
+    document.getElementById("status").innerText =
+        "📌 Status: " + status;
+
+
+    resetTimeline();
+
+
+    if (status === "Collection Accepted") {
+
+        document.getElementById("step3")
+            .classList.add("completed");
+
     }
 
 
-    // =========================
-    // ACCEPT REQUEST
-    // =========================
+    else if (status === "Collector On The Way") {
 
-    function acceptRequest() {
+        document.getElementById("step3")
+            .classList.add("completed");
 
-        let activeRequest =
-            localStorage.getItem("activeRequest");
+        document.getElementById("step4")
+            .classList.add("active");
 
-
-        if (activeRequest !== "true") {
-
-            alert("No active collection request.");
-
-            return;
-        }
-
-
-        localStorage.setItem(
-            "collectionStatus",
-            "Collection Accepted"
-        );
-
-
-        updateStatus();
-
-
-        alert(
-            "Collection Request Accepted!"
-        );
     }
 
 
-    // =========================
-    // COMPLETE REQUEST
-    // =========================
+    else if (status === "Reached Hospital") {
 
-    function completeRequest() {
+        document.getElementById("step3")
+            .classList.add("completed");
 
-        let activeRequest =
-            localStorage.getItem("activeRequest");
+        document.getElementById("step4")
+            .classList.add("completed");
 
+        document.getElementById("step5")
+            .classList.add("active");
 
-        if (activeRequest !== "true") {
-
-            alert("No active collection request.");
-
-            return;
-        }
-
-
-        localStorage.setItem(
-            "collectionStatus",
-            "Completed"
-        );
-
-
-        updateStatus();
-
-
-        alert(
-            "Waste Collection Completed!"
-        );
     }
 
 
-    // =========================
-    // OPEN QR PAGE
-    // =========================
+    else if (status === "Waste Collected") {
 
-    function openQR() {
+        document.getElementById("step3")
+            .classList.add("completed");
 
-        let activeRequest =
-            localStorage.getItem("activeRequest");
+        document.getElementById("step4")
+            .classList.add("completed");
 
+        document.getElementById("step5")
+            .classList.add("completed");
 
-        if (activeRequest !== "true") {
+        document.getElementById("step6")
+            .classList.add("active");
 
-            alert("No active collection request.");
-
-            return;
-        }
-
-
-        window.location.href = "qr.html";
     }
 
 
-    // =========================
-    // LOGOUT
-    // =========================
+    else if (status === "Completed") {
 
-    function logout() {
+        document.getElementById("step3")
+            .classList.add("completed");
 
-        localStorage.removeItem("loggedIn");
+        document.getElementById("step4")
+            .classList.add("completed");
 
-        localStorage.removeItem("userRole");
+        document.getElementById("step5")
+            .classList.add("completed");
 
-        window.location.href =
-            "login.html";
+        document.getElementById("step6")
+            .classList.add("completed");
+
+        document.getElementById("step7")
+            .classList.add("completed");
+
     }
 
-
-    // =========================
-    // AUTO UPDATE
-    // =========================
-
-    setInterval(function() {
-
-        loadRequest();
-
-    }, 1000);
+}
 
 
-    // FIRST LOAD
+/* RESET */
+
+function resetTimeline() {
+
+    let steps = [
+        "step3",
+        "step4",
+        "step5",
+        "step6",
+        "step7"
+    ];
+
+
+    steps.forEach(function(id) {
+
+        document.getElementById(id)
+            .classList.remove("active");
+
+        document.getElementById(id)
+            .classList.remove("completed");
+
+    });
+
+}
+
+
+/* TRACKING */
+
+function openTracking() {
+
+    window.location.href =
+        "tracking.html";
+
+}
+
+
+/* QR */
+
+function openQR() {
+
+    window.location.href =
+        "qr.html";
+
+}
+
+
+/* MESSAGE */
+
+function showMessage(text) {
+
+    document.getElementById("message")
+        .innerText = text;
+
+}
+
+
+/* LOGOUT */
+
+function logout() {
+
+    localStorage.clear();
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* AUTO UPDATE */
+
+loadRequest();
+
+setInterval(function() {
 
     loadRequest();
+
+}, 1000);
+
 
 </script>
 
