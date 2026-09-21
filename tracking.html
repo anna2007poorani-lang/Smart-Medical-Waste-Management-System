@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Collector Tracking - Smart Medical Waste</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f8f6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .header {
+            background: #176b5b;
+            color: white;
+            padding: 22px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            margin-top: 18px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+        }
+
+        h2 {
+            color: #176b5b;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .detail-box {
+            background: #eef4f7;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .detail-box b {
+            display: block;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .map {
+            height: 280px;
+            background: #e5f2ee;
+            border-radius: 12px;
+            position: relative;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .road {
+            position: absolute;
+            top: 50%;
+            left: 8%;
+            right: 8%;
+            height: 6px;
+            background: #999;
+        }
+
+        .hospital {
+            position: absolute;
+            left: 7%;
+            top: 42%;
+            font-size: 38px;
+        }
+
+        .collector {
+            position: absolute;
+            left: 48%;
+            top: 39%;
+            font-size: 38px;
+            transition: 1s;
+        }
+
+        .location {
+            position: absolute;
+            right: 7%;
+            top: 42%;
+            font-size: 38px;
+        }
+
+        .labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .status {
+            background: #fff4cc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .eta {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 18px;
+            color: #176b5b;
+            font-weight: bold;
+        }
+
+        .timeline {
+            margin-top: 15px;
+        }
+
+        .step {
+            padding: 14px;
+            margin: 8px 0;
+            border-radius: 8px;
+            background: #eeeeee;
+            font-size: 16px;
+        }
+
+        .completed {
+            background: #d8f3dc;
+            color: #176b5b;
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #176b5b;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d4d42;
+        }
+
+        .logout {
+            background: #c0392b;
+        }
+
+        .logout:hover {
+            background: #922b21;
+        }
+
+        @media (max-width: 600px) {
+            .details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="header">
+        <h1>🚚 Collector Tracking</h1>
+        <p>Smart Medical Waste Management System</p>
+    </div>
+
+
+    <!-- COLLECTION DETAILS -->
+
+    <div class="card">
+
+        <h2>📋 Collection Details</h2>
+
+        <div class="details">
+
+            <div class="detail-box">
+                <b>Request ID</b>
+                <span id="requestId">Loading...</span>
+            </div>
+
+            <div class="detail-box">
+                <b>Hospital</b>
+                <span id="hospital">Loading...</span>
+            </div>
+
+            <div class="detail-box">
+                <b>Waste Type</b>
+                <span id="waste">Loading...</span>
+            </div>
+
+            <div class="detail-box">
+                <b>Quantity</b>
+                <span id="quantity">Loading...</span>
+            </div>
+
+            <div class="detail-box">
+                <b>Collection Location</b>
+                <span id="location">Loading...</span>
+            </div>
+
+            <div class="detail-box">
+                <b>Collector</b>
+                <span>Assigned Collector</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- AI CLASSIFICATION -->
+
+    <div class="card">
+
+        <h2>🤖 AI Waste Classification</h2>
+
+        <div class="detail-box">
+
+            <p>
+                <b>Waste Category:</b>
+                <span id="aiCategory">Loading...</span>
+            </p>
+
+            <p>
+                <b>AI Confidence:</b>
+                <span id="aiConfidence">Loading...</span>
+            </p>
+
+            <p>
+                <b>Priority:</b>
+                <span id="priority">Normal</span>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- COLLECTOR LOCATION -->
+
+    <div class="card">
+
+        <h2>📍 Collector Location</h2>
+
+        <div class="map">
+
+            <div class="road"></div>
+
+            <div class="hospital">
+                🏥
+            </div>
+
+            <div class="collector" id="collectorIcon">
+                🚚
+            </div>
+
+            <div class="location">
+                📍
+            </div>
+
+        </div>
+
+        <div class="labels">
+            <span>Hospital</span>
+            <span>Collector</span>
+            <span>Collection Point</span>
+        </div>
+
+        <div class="status" id="status">
+            ⏳ Waiting for Collector
+        </div>
+
+        <div class="eta" id="eta">
+            ⏱️ Estimated Arrival: --
+        </div>
+
+    </div>
+
+
+    <!-- COLLECTION TIMELINE -->
+
+    <div class="card">
+
+        <h2>📋 Collection Timeline</h2>
+
+        <div class="timeline">
+
+            <div class="step" id="step1">
+                ⭕ Request Created
+            </div>
+
+            <div class="step" id="step2">
+                ⭕ AI Waste Classification
+            </div>
+
+            <div class="step" id="step3">
+                ⭕ Collector Accepted
+            </div>
+
+            <div class="step" id="step4">
+                🚚 Collector On The Way
+            </div>
+
+            <div class="step" id="step5">
+                ⭕ Reached Hospital
+            </div>
+
+            <div class="step" id="step6">
+                ⭕ Waste Collected
+            </div>
+
+            <div class="step" id="step7">
+                ⭕ Collection Completed
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TRACKING ACTIONS -->
+
+    <div class="card">
+
+        <h2>⚙️ Tracking Actions</h2>
+
+        <button onclick="startJourney()">
+            🚚 Start Journey
+        </button>
+
+        <button onclick="reachedHospital()">
+            🏥 Reached Hospital
+        </button>
+
+        <button onclick="wasteCollected()">
+            ♻️ Waste Collected
+        </button>
+
+        <button onclick="completeCollection()">
+            ✅ Complete Collection
+        </button>
+
+        <button onclick="goQR()">
+            📱 QR Verification
+        </button>
+
+        <button onclick="goBack()">
+            ← Back to Collector
+        </button>
+
+        <button class="logout" onclick="logout()">
+            🚪 Logout
+        </button>
+
+    </div>
+
+
+    <div style="text-align:center; margin-top:25px; color:#777;">
+        Smart Medical Waste Management System
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==============================
+   LOAD REQUEST DATA
+============================== */
+
+let requestId = localStorage.getItem("requestId");
+let hospital = localStorage.getItem("hospital");
+let waste = localStorage.getItem("waste");
+let quantity = localStorage.getItem("quantity");
+let locationData = localStorage.getItem("location");
+
+document.getElementById("requestId").innerText =
+    requestId || "Not Available";
+
+document.getElementById("hospital").innerText =
+    hospital || "Not Available";
+
+document.getElementById("waste").innerText =
+    waste || "Not Available";
+
+document.getElementById("quantity").innerText =
+    quantity || "Not Available";
+
+document.getElementById("location").innerText =
+    locationData || "Not Available";
+
+
+/* ==============================
+   LOAD AI DATA
+============================== */
+
+let aiCategory =
+    localStorage.getItem("requestAICategory") ||
+    localStorage.getItem("aiWasteCategory") ||
+    "Not Available";
+
+let aiConfidence =
+    localStorage.getItem("requestAIConfidence") ||
+    localStorage.getItem("aiConfidence") ||
+    "Not Available";
+
+document.getElementById("aiCategory").innerText =
+    aiCategory;
+
+document.getElementById("aiConfidence").innerText =
+    aiConfidence;
+
+
+/* ==============================
+   PRIORITY
+============================== */
+
+if (
+    aiCategory.toLowerCase().includes("syringe") ||
+    aiCategory.toLowerCase().includes("sharp")
+) {
+
+    document.getElementById("priority").innerText =
+        "High Priority";
+
+} else {
+
+    document.getElementById("priority").innerText =
+        "Normal";
+}
+
+
+/* ==============================
+   UPDATE TRACKING
+============================== */
+
+function updateTracking() {
+
+    let status =
+        localStorage.getItem("collectionStatus") ||
+        "Pending";
+
+    let statusElement =
+        document.getElementById("status");
+
+    let etaElement =
+        document.getElementById("eta");
+
+    let collectorIcon =
+        document.getElementById("collectorIcon");
+
+
+    /* RESET TIMELINE */
+
+    for (let i = 1; i <= 7; i++) {
+
+        document
+            .getElementById("step" + i)
+            .classList.remove("completed");
+
+    }
+
+
+    /* REQUEST CREATED */
+
+    document
+        .getElementById("step1")
+        .classList.add("completed");
+
+
+    /* AI CLASSIFICATION */
+
+    document
+        .getElementById("step2")
+        .classList.add("completed");
+
+
+    /* COLLECTION ACCEPTED */
+
+    if (
+        status === "Collection Accepted" ||
+        status === "Collector On The Way" ||
+        status === "Reached Hospital" ||
+        status === "Waste Collected" ||
+        status === "Completed"
+    ) {
+
+        document
+            .getElementById("step3")
+            .classList.add("completed");
+
+    }
+
+
+    /* ON THE WAY */
+
+    if (
+        status === "Collector On The Way" ||
+        status === "Reached Hospital" ||
+        status === "Waste Collected" ||
+        status === "Completed"
+    ) {
+
+        document
+            .getElementById("step4")
+            .classList.add("completed");
+
+    }
+
+
+    /* REACHED HOSPITAL */
+
+    if (
+        status === "Reached Hospital" ||
+        status === "Waste Collected" ||
+        status === "Completed"
+    ) {
+
+        document
+            .getElementById("step5")
+            .classList.add("completed");
+
+    }
+
+
+    /* WASTE COLLECTED */
+
+    if (
+        status === "Waste Collected" ||
+        status === "Completed"
+    ) {
+
+        document
+            .getElementById("step6")
+            .classList.add("completed");
+
+    }
+
+
+    /* COMPLETED */
+
+    if (status === "Completed") {
+
+        document
+            .getElementById("step7")
+            .classList.add("completed");
+
+    }
+
+
+    /* STATUS TEXT */
+
+    if (status === "Pending") {
+
+        statusElement.innerText =
+            "⏳ Waiting for Collector";
+
+        etaElement.innerText =
+            "⏱️ Estimated Arrival: --";
+
+        collectorIcon.style.left = "48%";
+
+    }
+
+    else if (status === "Collection Accepted") {
+
+        statusElement.innerText =
+            "✅ Collector Accepted";
+
+        etaElement.innerText =
+            "⏱️ Estimated Arrival: 12 minutes";
+
+        collectorIcon.style.left = "35%";
+
+    }
+
+    else if (status === "Collector On The Way") {
+
+        statusElement.innerText =
+            "🚚 Collector is on the way";
+
+        etaElement.innerText =
+            "⏱️ Estimated Arrival: 8 minutes";
+
+        collectorIcon.style.left = "48%";
+
+    }
+
+    else if (status === "Reached Hospital") {
+
+        statusElement.innerText =
+            "🏥 Collector reached the hospital";
+
+        etaElement.innerText =
+            "📍 Collector has arrived";
+
+        collectorIcon.style.left = "8%";
+
+    }
+
+    else if (status === "Waste Collected") {
+
+        statusElement.innerText =
+            "♻️ Waste has been collected";
+
+        etaElement.innerText =
+            "📦 Collection in progress";
+
+        collectorIcon.style.left = "60%";
+
+    }
+
+    else if (status === "Completed") {
+
+        statusElement.innerText =
+            "✅ Collection Completed";
+
+        etaElement.innerText =
+            "🎉 Collection successfully completed";
+
+        collectorIcon.style.left = "88%";
+
+    }
+
+}
+
+
+/* ==============================
+   ACTION BUTTONS
+============================== */
+
+function startJourney() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Collector On The Way"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "On The Way"
+    );
+
+    updateTracking();
+
+}
+
+
+function reachedHospital() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Reached Hospital"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "Reached Hospital"
+    );
+
+    updateTracking();
+
+}
+
+
+function wasteCollected() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Waste Collected"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "Waste Collected"
+    );
+
+    updateTracking();
+
+}
+
+
+function completeCollection() {
+
+    localStorage.setItem(
+        "collectionStatus",
+        "Completed"
+    );
+
+    localStorage.setItem(
+        "trackingStatus",
+        "Collection Completed"
+    );
+
+    updateTracking();
+
+}
+
+
+/* ==============================
+   QR
+============================== */
+
+function goQR() {
+
+    window.location.href = "qr.html";
+
+}
+
+
+/* ==============================
+   BACK
+============================== */
+
+function goBack() {
+
+    window.location.href =
+        "collector.html";
+
+}
+
+
+/* ==============================
+   LOGOUT
+============================== */
+
+function logout() {
+
+    localStorage.clear();
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* ==============================
+   AUTO UPDATE
+============================== */
+
+updateTracking();
+
+setInterval(function() {
+
+    updateTracking();
+
+}, 1000);
+
+</script>
+
+</body>
+</html>
