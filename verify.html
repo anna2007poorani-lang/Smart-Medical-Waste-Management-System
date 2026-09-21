@@ -1,66 +1,428 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Request Verification</title>
+    <title>Request Verification - Smart Medical Waste</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background: #f1f8f6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .header {
+            background: #176b5b;
+            color: white;
+            padding: 22px;
+            border-radius: 15px;
             text-align: center;
-            padding: 30px;
         }
 
         .card {
-            max-width: 500px;
-            margin: auto;
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            padding: 22px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.12);
         }
 
-        h1 {
+        h2 {
             color: #176b5b;
+        }
+
+        .detail {
+            background: #eef4f7;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 9px;
+        }
+
+        .detail b {
+            display: block;
+            color: #666;
+            margin-bottom: 5px;
         }
 
         .verified {
-            color: #176b5b;
+            margin-top: 20px;
             background: #d8f3dc;
-            padding: 15px;
-            border-radius: 8px;
+            color: #176b5b;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
             font-weight: bold;
+        }
+
+        .ai-box {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fff4cc;
+            font-weight: bold;
+        }
+
+        .completed {
+            background: #d8f3dc;
+            color: #176b5b;
+        }
+
+        .note {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="container">
 
-    <h1>📱 Request Verification</h1>
+    <div class="header">
 
-    <p><b>Request ID:</b></p>
+        <h1>📱 Request Verification</h1>
 
-    <p id="requestId">Reading QR data...</p>
+        <p>
+            Smart Medical Waste Management System
+        </p>
+
+    </div>
+
+
+    <!-- REQUEST DETAILS -->
+
+    <div class="card">
+
+        <h2>📋 Collection Request</h2>
+
+        <div class="detail">
+
+            <b>Request ID</b>
+
+            <span id="requestId">
+                Reading QR data...
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <b>Hospital</b>
+
+            <span id="hospital">
+                Loading...
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <b>Waste Type</b>
+
+            <span id="waste">
+                Loading...
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <b>Quantity</b>
+
+            <span id="quantity">
+                Loading...
+            </span>
+
+        </div>
+
+
+        <div class="detail">
+
+            <b>Collection Location</b>
+
+            <span id="location">
+                Loading...
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- AI DETAILS -->
+
+    <div class="card">
+
+        <h2>🤖 AI Classification</h2>
+
+        <div class="ai-box">
+
+            <div class="detail">
+
+                <b>Waste Category</b>
+
+                <span id="aiCategory">
+                    Loading...
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <b>AI Confidence</b>
+
+                <span id="aiConfidence">
+                    Loading...
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <b>Priority</b>
+
+                <span id="priority">
+                    Loading...
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div class="card">
+
+        <h2>🚚 Collection Status</h2>
+
+        <div
+            class="status"
+            id="status"
+        >
+            Loading...
+        </div>
+
+    </div>
+
+
+    <!-- VERIFICATION -->
 
     <div class="verified">
-        ✅ QR data received
+
+        ✅ REQUEST VERIFIED
+
         <br>
-        Request verification page opened.
+
+        <span
+            style="
+            font-size:14px;
+            font-weight:normal;
+            "
+        >
+            QR verification successful
+        </span>
+
+    </div>
+
+
+    <div class="note">
+
+        Smart Medical Waste Management System
+
     </div>
 
 </div>
 
+
 <script>
 
-    let currentUrl = new URL(window.location.href);
+/* =====================================
+   READ QR REQUEST ID
+===================================== */
 
-    let requestId =
-        currentUrl.searchParams.get("requestId");
+let currentUrl =
+    new URL(window.location.href);
 
-    document.getElementById("requestId").innerText =
-        requestId || "No Request ID found";
+let requestId =
+    currentUrl.searchParams.get(
+        "requestId"
+    );
+
+
+/* =====================================
+   DISPLAY REQUEST ID
+===================================== */
+
+document.getElementById(
+    "requestId"
+).innerText =
+    requestId ||
+    "No Request ID found";
+
+
+/* =====================================
+   READ DATA
+===================================== */
+
+let hospital =
+    localStorage.getItem("hospital");
+
+let waste =
+    localStorage.getItem("waste");
+
+let quantity =
+    localStorage.getItem("quantity");
+
+let locationData =
+    localStorage.getItem("location");
+
+let aiCategory =
+    localStorage.getItem(
+        "requestAICategory"
+    ) ||
+    localStorage.getItem(
+        "aiWasteCategory"
+    );
+
+let aiConfidence =
+    localStorage.getItem(
+        "requestAIConfidence"
+    ) ||
+    localStorage.getItem(
+        "aiConfidence"
+    );
+
+let collectionStatus =
+    localStorage.getItem(
+        "collectionStatus"
+    ) ||
+    "Pending";
+
+
+/* =====================================
+   DISPLAY DATA
+===================================== */
+
+document.getElementById(
+    "hospital"
+).innerText =
+    hospital ||
+    "Not Available";
+
+
+document.getElementById(
+    "waste"
+).innerText =
+    waste ||
+    "Not Available";
+
+
+document.getElementById(
+    "quantity"
+).innerText =
+    quantity ||
+    "Not Available";
+
+
+document.getElementById(
+    "location"
+).innerText =
+    locationData ||
+    "Not Available";
+
+
+document.getElementById(
+    "aiCategory"
+).innerText =
+    aiCategory ||
+    "Not Available";
+
+
+document.getElementById(
+    "aiConfidence"
+).innerText =
+    aiConfidence ||
+    "Not Available";
+
+
+/* =====================================
+   PRIORITY
+===================================== */
+
+if (
+    (aiCategory || "")
+        .toLowerCase()
+        .includes("syringe") ||
+    (aiCategory || "")
+        .toLowerCase()
+        .includes("sharp")
+) {
+
+    document.getElementById(
+        "priority"
+    ).innerText =
+        "High Priority";
+
+} else {
+
+    document.getElementById(
+        "priority"
+    ).innerText =
+        "Normal";
+
+}
+
+
+/* =====================================
+   STATUS
+===================================== */
+
+let statusElement =
+    document.getElementById(
+        "status"
+    );
+
+
+statusElement.innerText =
+    collectionStatus;
+
+
+if (
+    collectionStatus ===
+    "Completed"
+) {
+
+    statusElement.classList.add(
+        "completed"
+    );
+
+}
 
 </script>
 
